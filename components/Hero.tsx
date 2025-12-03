@@ -25,6 +25,7 @@ export function Hero() {
           key={image}
           className="absolute inset-0 z-10 transition-opacity duration-700"
           style={{
+            margin: '2px',
             backgroundImage: `url(${image})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
