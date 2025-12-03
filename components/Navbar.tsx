@@ -82,9 +82,9 @@ function AnimatedNavLink({ text }: { text: string }) {
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
     >
-      <div className="text-white font-medium">{text}</div>
+      <div className="text-black font-medium">{text}</div>
       <motion.div
-        className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
+        className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: isHovered ? 1 : 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -99,16 +99,16 @@ function MobileNavLink({ text, onClick }: { text: string; onClick: () => void })
 
   return (
     <div
-      className="relative cursor-pointer py-3 px-2 min-h-[44px] flex items-center rounded-lg transition-colors hover:bg-white/10"
+      className="relative cursor-pointer py-3 px-2 min-h-[44px] flex items-center rounded-lg transition-colors hover:bg-gray-200/50"
       onTouchStart={() => setIsActive(true)}
       onTouchEnd={() => setIsActive(false)}
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => setIsActive(false)}
       onClick={onClick}
     >
-      <div className="text-white font-medium">{text}</div>
+      <div className="text-slate-900 font-medium">{text}</div>
       <motion.div
-        className="absolute bottom-2 left-2 right-2 h-0.5 bg-white"
+        className="absolute bottom-2 left-2 right-2 h-0.5 bg-black"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: isActive ? 1 : 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -128,19 +128,19 @@ function LiquidButton({ onClick }: { onClick: () => void }) {
 
   return (
     <button
-      className="relative overflow-hidden rounded-full border border-white px-4 py-2.5 sm:px-6 sm:py-3 min-h-[44px] flex items-center justify-center"
+      className="relative overflow-hidden rounded-full border border-black px-4 py-2.5 sm:px-6 sm:py-3 min-h-[44px] flex items-center justify-center"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
     >
       <motion.div
-        className="absolute inset-0 bg-white rounded-full origin-center"
+        className="absolute inset-0 bg-black rounded-full origin-center"
         animate={{ scale: isHovered ? 1 : 0 }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       />
 
       <span className="relative z-10 font-medium text-xs sm:text-sm tracking-wide transition-colors duration-300">
-        <span className={isHovered ? 'text-black' : 'text-white'}>GET IN TOUCH</span>
+        <span className={isHovered ? 'text-white' : 'text-black'}>GET IN TOUCH</span>
       </span>
     </button>
   );
@@ -208,7 +208,7 @@ export function Navbar() {
 
   return (
     <motion.nav
-      className="fixed left-0 right-0 z-50 bg-transparent px-4 sm:px-6 md:px-8 lg:px-12 py-2.5 sm:py-3 touch-manipulation"
+      className="fixed left-0 right-0 z-50 bg-[#E8E8E8] px-4 sm:px-6 md:px-8 lg:px-12 py-2.5 sm:py-3 touch-manipulation"
       initial="hidden"
       animate={hasAnimated ? (isVisible ? 'visible' : { y: '-100%', opacity: 1, boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)' }) : controls}
       variants={navbarVariants}
@@ -264,7 +264,7 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle mobile menu"
           >
-            <Menu className="w-6 h-6 text-white" />
+            <Menu className="w-6 h-6 text-slate-900" />
           </motion.button>
         </div>
 
@@ -274,7 +274,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden mt-6 pb-4 flex flex-col gap-2 bg-black/20 backdrop-blur-sm rounded-lg p-4"
+            className="md:hidden mt-6 pb-4 flex flex-col gap-2"
           >
             {navLinks.map((link) => (
               <MobileNavLink
