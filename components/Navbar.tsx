@@ -94,6 +94,30 @@ function AnimatedNavLink({ text }: { text: string }) {
   );
 }
 
+function MobileNavLink({ text, onClick }: { text: string; onClick: () => void }) {
+  const [isActive, setIsActive] = useState(false);
+
+  return (
+    <div
+      className="relative cursor-pointer py-3 px-2 min-h-[44px] flex items-center rounded-lg transition-colors hover:bg-gray-200/50"
+      onTouchStart={() => setIsActive(true)}
+      onTouchEnd={() => setIsActive(false)}
+      onMouseEnter={() => setIsActive(true)}
+      onMouseLeave={() => setIsActive(false)}
+      onClick={onClick}
+    >
+      <div className="text-slate-900 font-medium">{text}</div>
+      <motion.div
+        className="absolute bottom-2 left-2 right-2 h-0.5 bg-black"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: isActive ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        style={{ originX: 0 }}
+      />
+    </div>
+  );
+}
+
 function LiquidButton({ onClick }: { onClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
@@ -153,6 +177,34 @@ export function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  const handleNavClick = (link: string) => {
+    if (link === 'HOME') {
+      const page1 = document.querySelector('[data-page="1"]');
+      if (page1) {
+        page1.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileMenuOpen(false);
+    } else if (link === 'SERVICES') {
+      const page2 = document.querySelector('[data-page="2"]');
+      if (page2) {
+        page2.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileMenuOpen(false);
+    } else if (link === 'PRODUCTS') {
+      const page3 = document.querySelector('[data-page="3"]');
+      if (page3) {
+        page3.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileMenuOpen(false);
+    } else if (link === 'ABOUT US') {
+      const page4 = document.querySelector('[data-page="4"]');
+      if (page4) {
+        page4.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileMenuOpen(false);
+    }
+  };
 
   return (
     <motion.nav
@@ -225,39 +277,11 @@ export function Navbar() {
             className="md:hidden mt-6 pb-4 flex flex-col gap-2"
           >
             {navLinks.map((link) => (
-              <div
+              <MobileNavLink
                 key={link}
-                className="text-slate-900 font-medium cursor-pointer py-3 px-2 hover:bg-gray-200/50 rounded-lg transition-colors min-h-[44px] flex items-center"
-                onClick={() => {
-                  if (link === 'HOME') {
-                    const page1 = document.querySelector('[data-page="1"]');
-                    if (page1) {
-                      page1.scrollIntoView({ behavior: 'smooth' });
-                    }
-                    setMobileMenuOpen(false);
-                  } else if (link === 'SERVICES') {
-                    const page2 = document.querySelector('[data-page="2"]');
-                    if (page2) {
-                      page2.scrollIntoView({ behavior: 'smooth' });
-                    }
-                    setMobileMenuOpen(false);
-                  } else if (link === 'PRODUCTS') {
-                    const page3 = document.querySelector('[data-page="3"]');
-                    if (page3) {
-                      page3.scrollIntoView({ behavior: 'smooth' });
-                    }
-                    setMobileMenuOpen(false);
-                  } else if (link === 'ABOUT US') {
-                    const page4 = document.querySelector('[data-page="4"]');
-                    if (page4) {
-                      page4.scrollIntoView({ behavior: 'smooth' });
-                    }
-                    setMobileMenuOpen(false);
-                  }
-                }}
-              >
-                {link}
-              </div>
+                text={link}
+                onClick={() => handleNavClick(link)}
+              />
             ))}
             <div className="mt-2">
               <LiquidButton onClick={() => router.push('/contact')} />
