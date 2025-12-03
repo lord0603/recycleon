@@ -17,22 +17,27 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
     offset: ["start end", "end start"]
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.3]);
-  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.95]);
-  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -20]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1.2, 1, 1, 1.1]);
 
   return (
     <motion.div
       ref={cardRef}
-      className="mb-6 md:mb-0 md:sticky min-h-[450px] md:h-[520px] bg-white rounded-2xl md:rounded-[40px] border border-gray-200 shadow-sm flex flex-col md:flex-row overflow-hidden touch-manipulation"
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="sticky min-h-[450px] md:h-[520px] bg-white rounded-2xl md:rounded-[40px] border border-gray-200 shadow-sm flex flex-col md:flex-row overflow-hidden touch-manipulation"
       style={{
         top: `calc(10vh + (${index} * 20px))`,
-        opacity,
-        scale,
-        y,
       }}
     >
-      <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 lg:p-14 flex flex-col">
+      <motion.div
+        className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 lg:p-14 flex flex-col"
+        initial={{ opacity: 0, x: -30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+      >
         <div className="w-11 h-11 md:w-12 md:h-12 rounded-full border border-gray-300 flex items-center justify-center mb-4 md:mb-auto flex-shrink-0">
           <span className="text-sm md:text-base text-gray-600 font-medium">{industry.id}</span>
         </div>
@@ -45,9 +50,15 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
         <p className="text-gray-500 text-sm sm:text-base md:text-lg leading-relaxed max-w-md mt-4 md:mt-6">
           {industry.description}
         </p>
-      </div>
+      </motion.div>
 
-      <div className="w-full md:w-1/2 h-64 sm:h-72 md:h-full overflow-hidden">
+      <motion.div
+        className="w-full md:w-1/2 h-64 sm:h-72 md:h-full overflow-hidden"
+        initial={{ opacity: 0, x: 30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+      >
         <motion.img
           src={industry.image}
           alt={industry.title}
@@ -55,10 +66,10 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
           style={{
             objectFit: 'cover',
             objectPosition: 'center',
-            scale: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1.1, 1, 1, 1.05]),
+            scale: imageScale,
           }}
         />
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -124,7 +135,7 @@ export function WhyChoose() {
           </h3>
         </motion.div>
 
-        <div className="space-y-6 md:space-y-0">
+        <div className="space-y-0">
           {industries.map((industry, index) => (
             <IndustryCard key={industry.id} industry={industry} index={index} />
           ))}
