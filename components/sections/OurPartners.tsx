@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const ingredients = [
@@ -36,26 +36,10 @@ const ingredients = [
 
 export function OurPartners() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeCard, setActiveCard] = useState<number | null>(null);
-  const lastScrollY = useRef(0);
-
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (Math.abs(currentScrollY - lastScrollY.current) > 10) {
-        setActiveCard(null);
-      }
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const card1X = useTransform(scrollYProgress, [0, 0.7], ['0%', '-50%']);
   const card1Y = useTransform(scrollYProgress, [0, 0.7], ['0%', '-50%']);
@@ -83,10 +67,6 @@ export function OurPartners() {
     { x: card4X, y: card4Y, rotate: card4Rotate },
   ];
 
-  const handleCardClick = (id: number) => {
-    setActiveCard(activeCard === id ? null : id);
-  };
-
   return (
     <section
       data-page="2"
@@ -106,23 +86,12 @@ export function OurPartners() {
         {ingredients.map((ingredient, index) => (
           <motion.div
             key={ingredient.id}
-            className={`absolute w-[280px] h-[360px] sm:w-[300px] sm:h-[380px] md:w-[22vw] md:h-[28vw] max-w-[360px] max-h-[460px] ${ingredient.color} rounded-2xl md:rounded-3xl shadow-2xl p-5 sm:p-6 md:p-7 lg:p-8 flex flex-col items-start justify-start cursor-pointer transition-shadow hover:shadow-3xl`}
+            className={`absolute w-[280px] h-[360px] sm:w-[300px] sm:h-[380px] md:w-[22vw] md:h-[28vw] max-w-[360px] max-h-[460px] ${ingredient.color} rounded-2xl md:rounded-3xl shadow-2xl p-5 sm:p-6 md:p-7 lg:p-8 flex flex-col items-start justify-start z-10`}
             style={{
-              x: activeCard === ingredient.id ? 0 : transforms[index].x,
-              y: activeCard === ingredient.id ? 0 : transforms[index].y,
-              rotate: activeCard === ingredient.id ? 0 : transforms[index].rotate,
-              zIndex: activeCard === ingredient.id ? 50 : 10,
+              x: transforms[index].x,
+              y: transforms[index].y,
+              rotate: transforms[index].rotate,
             }}
-            animate={{
-              scale: activeCard === ingredient.id ? 1.15 : 1,
-            }}
-            transition={{
-              scale: { duration: 0.3, ease: 'easeOut' },
-              x: { duration: 0.3, ease: 'easeOut' },
-              y: { duration: 0.3, ease: 'easeOut' },
-              rotate: { duration: 0.3, ease: 'easeOut' },
-            }}
-            onClick={() => handleCardClick(ingredient.id)}
           >
             <h3 className="text-white text-xl sm:text-2xl md:text-2xl lg:text-3xl font-bold leading-tight mb-3 sm:mb-4">
               {ingredient.title}
