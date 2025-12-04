@@ -16,9 +16,19 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Recycleon Technologies - Nature\'s Architects',
-  description: 'Swiss Biotech precision water treatment and purification solutions.',
+  title: 'Recycleon - Industrial & Municipal Water Treatment Solutions',
+  description: 'Top-rated water treatment company in India. We provide advanced water recycling, STP, and ETP solutions for factories and cities.',
+  keywords: ['water treatment India', 'industrial water recycling', 'sewage treatment plant', 'Recycleon', 'STP', 'ETP', 'water recycling solutions', 'industrial wastewater treatment'],
   viewport: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes',
+  openGraph: {
+    title: 'Recycleon - Industrial & Municipal Water Treatment Solutions',
+    description: 'Top-rated water treatment company in India. We provide advanced water recycling, STP, and ETP solutions for factories and cities.',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
