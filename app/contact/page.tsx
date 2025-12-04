@@ -1,59 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Loader2, CheckCircle2, ArrowLeft } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-    setErrorMessage('');
-
-    try {
-      const { error } = await supabase.from('contact_submissions').insert([
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          message: formData.message,
-        },
-      ]);
-
-      if (error) throw error;
-
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', message: '' });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus('error');
-      setErrorMessage('Failed to submit form. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -100,7 +53,9 @@ export default function ContactPage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="bg-[#F5F5F5] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-xl"
             >
-              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+              <form name="contact-page" method="POST" data-netlify="true" className="space-y-5 sm:space-y-6">
+                <input type="hidden" name="form-name" value="contact-page" />
+
                 <div className="space-y-2">
                   <label htmlFor="name" className="block text-xs sm:text-sm font-semibold text-gray-700">
                     Name<span className="text-[#14B8A6]">*</span>
@@ -109,8 +64,6 @@ export default function ContactPage() {
                     type="text"
                     id="name"
                     name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     required
                     className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white text-gray-900 text-sm sm:text-base placeholder:text-gray-400 focus:border-[#14B8A6] focus:ring-4 focus:ring-[#14B8A6]/10 outline-none transition-all duration-200"
                     placeholder="Your name"
@@ -125,8 +78,6 @@ export default function ContactPage() {
                     type="email"
                     id="email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     required
                     className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white text-gray-900 text-sm sm:text-base placeholder:text-gray-400 focus:border-[#14B8A6] focus:ring-4 focus:ring-[#14B8A6]/10 outline-none transition-all duration-200"
                     placeholder="your.email@example.com"
@@ -141,8 +92,6 @@ export default function ContactPage() {
                     type="tel"
                     id="phone"
                     name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
                     className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white text-gray-900 text-sm sm:text-base placeholder:text-gray-400 focus:border-[#14B8A6] focus:ring-4 focus:ring-[#14B8A6]/10 outline-none transition-all duration-200"
                     placeholder="+1 (555) 000-0000"
                   />
@@ -155,8 +104,6 @@ export default function ContactPage() {
                   <textarea
                     id="message"
                     name="message"
-                    value={formData.message}
-                    onChange={handleChange}
                     required
                     rows={5}
                     className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white text-gray-900 text-sm sm:text-base placeholder:text-gray-400 focus:border-[#14B8A6] focus:ring-4 focus:ring-[#14B8A6]/10 outline-none transition-all duration-200 resize-none"
@@ -164,48 +111,12 @@ export default function ContactPage() {
                   />
                 </div>
 
-                {submitStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-3 sm:p-4 bg-red-50 border-2 border-red-200 rounded-lg sm:rounded-xl text-red-700 text-xs sm:text-sm"
-                  >
-                    {errorMessage}
-                  </motion.div>
-                )}
-
-                {submitStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-3 sm:p-4 bg-green-50 border-2 border-green-200 rounded-lg sm:rounded-xl text-green-700 text-xs sm:text-sm flex items-center gap-2"
-                  >
-                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                    <span>Message sent successfully! We'll get back to you soon.</span>
-                  </motion.div>
-                )}
-
                 <button
                   type="submit"
-                  disabled={isSubmitting || submitStatus === 'success'}
-                  className="w-full px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 min-h-[48px]"
+                  className="w-full px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 min-h-[48px]"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
-                      <span>Sending...</span>
-                    </>
-                  ) : submitStatus === 'success' ? (
-                    <>
-                      <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span>Sent!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span>Send Message</span>
-                    </>
-                  )}
+                  <Send className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <span>Send Message</span>
                 </button>
               </form>
             </motion.div>

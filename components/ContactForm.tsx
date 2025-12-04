@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Loader2, CheckCircle2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { X, Send } from 'lucide-react';
 
 interface ContactFormProps {
   isOpen: boolean;
@@ -11,56 +9,6 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ isOpen, onClose }: ContactFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-    setErrorMessage('');
-
-    try {
-      const { error } = await supabase.from('contact_submissions').insert([
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          message: formData.message,
-        },
-      ]);
-
-      if (error) throw error;
-
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', message: '' });
-
-      setTimeout(() => {
-        onClose();
-        setSubmitStatus('idle');
-      }, 2000);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus('error');
-      setErrorMessage('Failed to submit form. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <AnimatePresence>
@@ -95,7 +43,9 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <form name="contact" method="POST" data-netlify="true" className="p-8 space-y-6">
+                <input type="hidden" name="form-name" value="contact" />
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
@@ -105,8 +55,6 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
                       type="text"
                       id="name"
                       name="name"
-                      value={formData.name}
-                      onChange={handleChange}
                       required
                       className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 bg-white focus:border-[#14B8A6] focus:ring-2 focus:ring-[#14B8A6]/20 outline-none transition-all duration-200"
                       placeholder="Your name"
@@ -121,8 +69,6 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
                       type="email"
                       id="email"
                       name="email"
-                      value={formData.email}
-                      onChange={handleChange}
                       required
                       className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 bg-white focus:border-[#14B8A6] focus:ring-2 focus:ring-[#14B8A6]/20 outline-none transition-all duration-200"
                       placeholder="your.email@example.com"
@@ -138,8 +84,6 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
                     type="tel"
                     id="phone"
                     name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 bg-white focus:border-[#14B8A6] focus:ring-2 focus:ring-[#14B8A6]/20 outline-none transition-all duration-200"
                     placeholder="+1 (555) 000-0000"
                   />
@@ -152,35 +96,12 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
                   <textarea
                     id="message"
                     name="message"
-                    value={formData.message}
-                    onChange={handleChange}
                     required
                     rows={5}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 bg-white focus:border-[#14B8A6] focus:ring-2 focus:ring-[#14B8A6]/20 outline-none transition-all duration-200 resize-none"
                     placeholder="Tell us about your project or inquiry..."
                   />
                 </div>
-
-                {submitStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
-                  >
-                    {errorMessage}
-                  </motion.div>
-                )}
-
-                {submitStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm flex items-center gap-2"
-                  >
-                    <CheckCircle2 className="w-5 h-5" />
-                    <span>Message sent successfully! We'll get back to you soon.</span>
-                  </motion.div>
-                )}
 
                 <div className="flex gap-4 pt-4">
                   <button
@@ -192,25 +113,10 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
                   </button>
                   <button
                     type="submit"
-                    disabled={isSubmitting || submitStatus === 'success'}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white rounded-lg font-semibold hover:shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-200 flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white rounded-lg font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : submitStatus === 'success' ? (
-                      <>
-                        <CheckCircle2 className="w-5 h-5" />
-                        <span>Sent!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-5 h-5" />
-                        <span>Send Message</span>
-                      </>
-                    )}
+                    <Send className="w-5 h-5" />
+                    <span>Send Message</span>
                   </button>
                 </div>
               </form>
