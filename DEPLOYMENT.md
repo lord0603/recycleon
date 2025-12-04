@@ -18,20 +18,27 @@
 Netlify should auto-detect these settings from `netlify.toml`, but verify:
 
 - **Build command**: `npm run build`
-- **Publish directory**: `out`
+- **Publish directory**: `.next`
 - **Base directory**: (leave empty)
 
-### 3. Set Environment Variables
+The site uses the `@netlify/plugin-nextjs` plugin for optimal Next.js deployment.
+
+### 3. Set Environment Variables (CRITICAL)
+
+**This step is required for the site to work properly!**
 
 In Netlify dashboard, go to:
 **Site settings → Environment variables → Add a variable**
 
-Add these two variables:
+Add these two variables with their exact values from your `.env` file:
 
-```
-NEXT_PUBLIC_SUPABASE_URL=https://tbkhfsmizldtcrasazhc.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRia2hmc21pemxkdGNyYXNhemhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mzc1MzEsImV4cCI6MjA3OTExMzUzMX0.pBW2NBbZdqoS_r4YQqRy_ufPtBjzbTXAJee5StQ6Z9o
-```
+1. **Variable name**: `NEXT_PUBLIC_SUPABASE_URL`
+   **Value**: (copy from your `.env` file)
+
+2. **Variable name**: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   **Value**: (copy from your `.env` file)
+
+**Important**: Make sure these values are set as "Environment variables" and not "Build environment variables" to ensure they're available during both build and runtime.
 
 ### 4. Deploy
 
@@ -73,10 +80,11 @@ After deployment, you can:
 
 ## Build Output
 
-The project builds to a static site in the `out/` directory:
+The project builds using Next.js with Netlify's plugin:
 - Total bundle size: ~169 KB (largest page)
 - Fully optimized for production
-- All pages pre-rendered as static HTML
+- Static pages pre-rendered at build time
+- Dynamic pages (like contact) rendered on-demand
 
 ## Need Help?
 
