@@ -35,10 +35,7 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
     setErrorMessage('');
 
     try {
-      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-      console.log('Supabase Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
-      const { data, error } = await supabase.from('contact_submissions').insert([
+      const { error } = await supabase.from('contact_submissions').insert([
         {
           name: formData.name,
           email: formData.email,
@@ -47,17 +44,7 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
         },
       ]);
 
-      console.log('Insert response:', { data, error });
-
-      if (error) {
-        console.error('Supabase error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-        throw error;
-      }
+      if (error) throw error;
 
       setSubmitStatus('success');
       setFormData({ name: '', email: '', phone: '', message: '' });
@@ -66,16 +53,10 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
         onClose();
         setSubmitStatus('idle');
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
-
-      // More detailed error message
-      const errorMsg = error?.message || 'Failed to submit form. Please try again.';
-      const errorDetails = error?.details || '';
-      const errorHint = error?.hint || '';
-
-      setErrorMessage(`${errorMsg}${errorDetails ? ` - ${errorDetails}` : ''}${errorHint ? ` (${errorHint})` : ''}`);
+      setErrorMessage('Failed to submit form. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
